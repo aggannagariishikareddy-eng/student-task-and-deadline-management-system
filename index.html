@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>StudyFlow | Student Task Manager</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+<div class="layout">
+    <aside class="sidebar">
+        <div class="brand"><b>S</b><span>StudyFlow<small>STUDENT WORKSPACE</small></span></div>
+        <p class="nav-label">WORKSPACE</p>
+        <button class="nav active" data-filter="all">▦　 Overview</button>
+        <button class="nav" data-filter="today">◷　 Due today</button>
+        <button class="nav" data-filter="upcoming">▤　 Upcoming</button>
+        <button class="nav" data-filter="completed">✓　 Completed</button>
+        <div class="tip"><b>✦ One task at a time.</b><p>Stay organised, keep moving, and make room for what matters.</p></div>
+        <small class="foot">STUDY SMART. STAY ON TRACK.</small>
+    </aside>
+
+    <main>
+        <header>
+            <div>
+                <p class="eyebrow" id="date-label">YOUR WORKSPACE</p>
+                <h1>Good day, student <em>✦</em></h1>
+                <p class="muted">A clear plan makes a productive day.</p>
+            </div>
+            <button class="primary" id="add">＋ Add new task</button>
+        </header>
+
+        <section class="stats">
+            <article><span>Total tasks</span><strong id="total">0</strong><small>All your tasks</small></article>
+            <article><span>Pending</span><strong id="pending">0</strong><small>Still to complete</small></article>
+            <article><span>Completed</span><strong id="done">0</strong><small>Tasks finished</small></article>
+            <article><span>Overdue</span><strong id="overdue">0</strong><small>Past their deadline</small></article>
+        </section>
+
+        <section class="panel">
+            <div class="panel-head">
+                <div>
+                    <p class="eyebrow">TASK ORGANISER</p>
+                    <h2 id="heading">All tasks</h2>
+                </div>
+                <div class="tools">
+                    <input id="search" placeholder="⌕  Search tasks..." aria-label="Search tasks">
+                    <select id="sort">
+                        <option value="deadline">Sort: Deadline</option>
+                        <option value="priority">Sort: Priority</option>
+                        <option value="newest">Sort: Newest</option>
+                    </select>
+                </div>
+            </div>
+            <div class="filters">
+                <button class="chip selected" data-filter="all">All tasks</button>
+                <button class="chip" data-filter="today">Due today</button>
+                <button class="chip" data-filter="upcoming">Upcoming</button>
+                <button class="chip" data-filter="completed">Completed</button>
+            </div>
+            <div id="tasks"></div>
+            <div class="empty" id="empty">
+                <div class="spark">✦</div>
+                <h3>No tasks here yet</h3>
+                <p>Add a task to start organising your study schedule.</p>
+                <button class="secondary" id="first">＋ Create your first task</button>
+            </div>
+        </section>
+
+        <section class="panel" style="margin-top: 24px;">
+            <div class="panel-head">
+                <div>
+                    <p class="eyebrow">ANALYTICS</p>
+                    <h2>Subject-wise Task Progress</h2>
+                </div>
+            </div>
+            <div class="chart-container" style="position: relative; height: 350px; width: 100%; margin: 16px 0 0; padding: 0; box-shadow: none; background: transparent;">
+                <canvas id="subjectChart"></canvas>
+            </div>
+        </section>
+
+        <section class="panel" style="margin-top: 24px;">
+            <div class="panel-head">
+                <div>
+                    <p class="eyebrow">OVERVIEW</p>
+                    <h2>Task Progress Chart</h2>
+                </div>
+            </div>
+            <div style="position: relative; height: 300px; max-width: 360px; margin: 16px auto 0;">
+                <canvas id="taskChart"></canvas>
+            </div>
+        </section>
+
+        <section class="panel" style="margin-top: 24px;">
+            <div class="panel-head">
+                <div>
+                    <p class="eyebrow">DATA STRUCTURES &amp; ALGORITHMS</p>
+                    <h2>ADS Algorithms</h2>
+                </div>
+            </div>
+            <div style="margin-top: 16px; display: flex; flex-direction: column; gap: 20px;">
+                <div>
+                    <h3 style="font: 700 15px Manrope; margin: 0 0 10px;">Binary Search Tree</h3>
+                    <button class="secondary" onclick="testBST()">Test BST</button>
+                    <div id="bstResult" style="margin-top: 10px; font-size: 13px; color: var(--ink);"></div>
+                </div>
+                <div>
+                    <h3 style="font: 700 15px Manrope; margin: 0 0 10px;">Search &amp; Sort Operations</h3>
+                    <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
+                        <input type="text" id="searchTask" placeholder="Enter task name" style="height: 36px; border: 1px solid var(--line); border-radius: 8px; padding: 0 10px; font: 11px 'DM Sans';">
+                        <button class="secondary" onclick="searchTask()">Search Task</button>
+                        <button class="secondary" onclick="sortTasks()">Sort by Deadline</button>
+                        <button class="secondary" onclick="showUrgentTasks()">Show Urgent Tasks</button>
+                    </div>
+                    <div id="adsResult" style="margin-top: 10px; font-size: 13px; color: var(--ink);"></div>
+                </div>
+            </div>
+        </section>
+
+        <footer>StudyFlow · Your tasks are saved in this browser.</footer>
+    </main>
+</div>
+
+<div class="shade" id="shade">
+    <form class="modal" id="form">
+        <div class="modal-head">
+            <div>
+                <p class="eyebrow">TASK DETAILS</p>
+                <h2 id="modal-title">Create a task</h2>
+            </div>
+            <button type="button" class="close" id="close">×</button>
+        </div>
+        <label>Task title<input id="title" maxlength="80" required placeholder="e.g. Complete DBMS assignment"></label>
+        <label>Subject / category<input id="subject" maxlength="40" placeholder="e.g. Database Management"></label>
+        <div class="two">
+            <label>Deadline<input id="deadline" type="date" required></label>
+            <label>Priority
+                <select id="priority">
+                    <option value="high">High</option>
+                    <option value="medium" selected>Medium</option>
+                    <option value="low">Low</option>
+                </select>
+            </label>
+        </div>
+        <label>Notes (optional)<textarea id="notes" rows="3" maxlength="240" placeholder="Add a short note..."></textarea></label>
+        <div class="actions">
+            <button type="button" class="secondary" id="cancel">Cancel</button>
+            <button class="primary">Save task</button>
+        </div>
+    </form>
+</div>
+
+<script src="script.js"></script>
+<script src="algorithms.js"></script>
+</body>
+</html>

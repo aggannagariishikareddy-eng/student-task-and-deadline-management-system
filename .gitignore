@@ -1,0 +1,10 @@
+# Compiled program
+student_tasks
+student_tasks.exe
+*.o
+*.out
+
+# Editor / operating system files
+.vscode/
+.DS_Store
+Thumbs.db
